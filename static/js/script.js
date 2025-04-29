@@ -18,6 +18,8 @@ function createGameboard() {
             return;
         }
         board_current_result[row_index][column_index] = value;
+        // Check there is a winner
+        checkRoundWinner(board_current_result);
         return;
     };
 
@@ -35,7 +37,6 @@ function createGameboard() {
             current_row = [];
             for (let j = 0; j < num_columns; j++) {
                 current_row.push(board[j][i]);
-                console.log('current row:', current_row)
             }
             transposed_board.push(current_row);
         }
@@ -79,8 +80,6 @@ function createGameboard() {
 
         // This function only check for consecutive elements in a row, so for columns for example, first you should transpose them and then send them as inputs to this function
 
-        // console.log(input_array);
-
         const num_rows = input_array.length;
         const num_columns = input_array[0].length;
 
@@ -93,8 +92,7 @@ function createGameboard() {
                     if (input_array[i][j] === current_mark) { counter++ };
                     if (counter >= 3) {
 
-                        console.log(input_array);
-                        console.log(`Three consecutive elements and the row/column/diagonal #${i}`);
+                        console.log(`Player with the mark "${current_mark}" Wins!`);
 
                         // return the row/column/diagonal index
                         return i;
@@ -112,31 +110,90 @@ function createGameboard() {
 
     function checkRoundWinner() {
 
+        let round_finished = false;
+
         const actual_board = [...board_current_result];
-        checkThreeConsectives(actual_board);
+        const row_completed = checkThreeConsectives(actual_board);
 
         const transposed_board = transposeBoard(actual_board);
-        checkThreeConsectives(transposed_board);
+        const column_completed = checkThreeConsectives(transposed_board);
         
         const main_diagonal_array = getMainDiagonal(actual_board);
-        checkThreeConsectives(main_diagonal_array);
+        const main_diagonal_completed = checkThreeConsectives(main_diagonal_array);
         
         const secondary_diagonal_array = getSecondaryDiagonal(transposed_board);
-        checkThreeConsectives(secondary_diagonal_array);
+        const secondary_diagonal_completed = checkThreeConsectives(secondary_diagonal_array);
 
+        if (
+            row_completed === null &&
+            column_completed === null &&
+            main_diagonal_completed === null &&
+            secondary_diagonal_completed === null
+        ) {
+            round_finished = false;
+        } else {
+            round_finished = true;
+        }
+
+        return {
+            round_finished,
+        }
+
+    }
+
+    function beginRound(user1, user2) {
+        let round_finished = false;
+        let player = user1;
+        let round_result = null;
         
+        while (!round_finished) {
+            const player_name = player.getName();
+            const player_id = player.getID();
+            const player_mark = player.getMark();
+
+            console.log(`Player ${player_name}, it's your turn! Here is the current board, Pick one of the empty cells!`);
+            console.log(board_current_result);
+            const new_input = prompt(`${player_name}! Input two digits separated by comma, i.e. the row and column numbers (beginning from 0)\ne.g. 0, 2`);
+            const user_input = new_input.split(",").map(el => Number(el));
+            console.log(user_input);
+
+            playTurn(player_mark, user_input[0], user_input[1]);
+            console.log(board_current_result);
+
+            // Check finishing of the game
+            round_result = checkRoundWinner();
+            console.log({round_result});
+            round_finished = round_result.round_finished;
+
+            if (round_finished) {
+                console.log(`Round is finished! Winner: ${player.getName()}`);
+                if (player_id === user1.getID()) {
+                    let new_score = user1.getScore() + 1;
+                    user1.updateScore(new_score)
+                } else if (player_id === user2.getID()) {
+                    let new_score = user2.getScore() + 1;
+                    user2.updateScore(new_score)
+                }
+                break;
+            } else {
+                // switch player
+                player = player_id === user1.getID() ? user2 : user1;
+            }
+        }
     }
     
     return {
         getCurrentResult,
         playTurn,
         checkRoundWinner,
+        beginRound,
     };
+
 };
 
 function createUser(mark, nick_name='Incognito') {
     
-    const score = 0;
+    let score = 0;
 
     nick_name = (nick_name === 'Incognito') ? `${nick_name}#${id}` : nick_name;
 
@@ -147,18 +204,29 @@ function createUser(mark, nick_name='Incognito') {
         return;
     }
 
-    getName = () => nick_name;
-    getMark = () => mark;
-    getScore = () => score;
+    // Attach a random id to each user to identify them
+    function generateRandomID (length = 10) {
+        const id = Math.random().toString().substring(2, length + 2);
+        return id;
+    }
+
+    const id = generateRandomID();
 
     function updateScore(newScore) {
         score = newScore;
     }
 
+    getName = () => nick_name;
+    getMark = () => mark;
+    getScore = () => score;
+    getID = () => id;
+
+
     return {
         getName,
         getMark,
         getScore,
+        getID,
         updateScore,
     }
 }
