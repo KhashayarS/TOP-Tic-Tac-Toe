@@ -18,8 +18,8 @@ function createGameboard() {
             return;
         }
         board_current_result[row_index][column_index] = value;
-        // Check there is a winner
-        checkRoundWinner(board_current_result);
+        // Check there is a winner (commented out, will be check later in the round_result)
+        // checkRoundWinner(board_current_result);
         return;
     };
 
@@ -114,7 +114,7 @@ function createGameboard() {
 
         const actual_board = [...board_current_result];
         const row_completed = checkThreeConsectives(actual_board);
-
+        
         const transposed_board = transposeBoard(actual_board);
         const column_completed = checkThreeConsectives(transposed_board);
         
@@ -141,24 +141,41 @@ function createGameboard() {
 
     }
 
+    function resetBoard() {
+        
+        for (let i = 0; i < board_current_result.length; i++) {
+            for (let j = 0; j < board_current_result[i].length; j++) {
+                board_current_result[i][j] = null;
+            }
+        }
+
+    }
+
     function beginRound(user1, user2) {
         let round_finished = false;
         let player = user1;
         let round_result = null;
-        
-        while (!round_finished) {
+
+        resetBoard();
+
+        let new_input = 'empty';
+        while (!round_finished, new_input !== null) {
             const player_name = player.getName();
             const player_id = player.getID();
             const player_mark = player.getMark();
 
             console.log(`Player ${player_name}, it's your turn! Here is the current board, Pick one of the empty cells!`);
             console.log(board_current_result);
-            const new_input = prompt(`${player_name}! Input two digits separated by comma, i.e. the row and column numbers (beginning from 0)\ne.g. 0, 2`);
-            const user_input = new_input.split(",").map(el => Number(el));
-            console.log(user_input);
+            new_input = prompt(`${player_name}! Input two digits separated by comma, i.e. the row and column numbers (beginning from 0)\ne.g. 0, 2`);
 
+            let user_input;
+            try {
+                user_input = new_input.split(",").map(el => Number(el));
+            } catch (error) {
+                throw (`The input format is not accpetable:\n${error}`);
+            }
+            
             playTurn(player_mark, user_input[0], user_input[1]);
-            console.log(board_current_result);
 
             // Check finishing of the game
             round_result = checkRoundWinner();
@@ -187,6 +204,7 @@ function createGameboard() {
         playTurn,
         checkRoundWinner,
         beginRound,
+        resetBoard
     };
 
 };
