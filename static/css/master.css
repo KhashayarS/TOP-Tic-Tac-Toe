@@ -1,0 +1,124 @@
+/* Simple CSS Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    overflow: hidden;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+ul, ol {
+    list-style: none;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+
+/* Custom sytles */
+.main {
+    /* border: 1px solid hotpink; */
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    height: 100vh;
+    width: 100vh;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+}
+
+.board-container {
+    display: grid;
+    grid-template-rows: repeat(3, 1fr); /* 3 equal rows */
+    grid-template-columns: repeat(3, 1fr); /* 3 equal columns */
+    width: 70%; /* Set the width of the grid */
+    height: 70%; /* Set the height of the grid */
+}
+
+.board-item {
+    aspect-ratio: 1 / 1; /* Ensures each grid item is square */
+    box-sizing: bord-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; /* Prevents content from overflowing */
+}
+
+svg.board-icon {
+    width: 80%;
+    height: 80%;
+}
+
+.board-item:nth-child(4) svg.board-icon,
+.board-item:nth-child(5) svg.board-icon,
+.board-item:nth-child(6) svg.board-icon {
+    width: 90%;
+    height: 90%;
+}
+
+.board-item:nth-child(1) {
+    border-right: 15px solid black;
+    border-bottom: 15px solid black;
+}
+
+.board-item:nth-child(2) {
+    border-left: 15px solid black;
+    border-bottom: 15px solid black;
+    border-right: 15px solid black;
+}
+
+.board-item:nth-child(3) {
+    border-left: 15px solid black;
+    border-bottom: 15px solid black;
+}
+
+.board-item:nth-child(4) {
+    border-right: 15px solid black;
+    border-top: 15px solid black;
+    border-bottom: 15px solid black;
+}
+
+.board-item:nth-child(5) {
+    border-top: 15px solid black;
+    border-right: 15px solid black;
+    border-bottom: 15px solid black;
+    border-left: 15px solid black;
+}
+
+.board-item:nth-child(6) {
+    border-left: 15px solid black;
+    border-top: 15px solid black;
+    border-bottom: 15px solid black;
+}
+
+.board-item:nth-child(7) {
+    border-right: 15px solid black;
+    border-top: 15px solid black;
+}
+
+.board-item:nth-child(8) {
+    border-left: 15px solid black;
+    border-top: 15px solid black;
+    border-right: 15px solid black;
+}
+
+.board-item:nth-child(9) {
+    border-left: 15px solid black;
+    border-top: 15px solid black;
+}
