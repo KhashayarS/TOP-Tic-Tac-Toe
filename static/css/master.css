@@ -1,3 +1,12 @@
+/* Variables */
+:root {
+    --page-color: #ff143b;
+    --board-color: #ff00ea;
+    --mark-color: #9a00ff;
+    --winning-mark-color: #00ff93;
+}
+
+
 /* Simple CSS Reset */
 * {
     margin: 0;
@@ -31,24 +40,32 @@ a {
 
 
 /* Custom sytles */
+body {
+    background-image: url("../images/background-1.png");
+    color: var(--page-color);
+}
+
 .main {
     /* border: 1px solid hotpink; */
     width: 100%;
-    display: flex;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: 1fr 5fr 1fr;
+    align-items: center;
     height: 100vh;
     width: 100vh;
     margin: 0 auto;
-    display: flex;
-    align-items: center;
+}
+
+.board-area {
+
 }
 
 .board-container {
     display: grid;
     grid-template-rows: repeat(3, 1fr); /* 3 equal rows */
     grid-template-columns: repeat(3, 1fr); /* 3 equal columns */
-    width: 70%; /* Set the width of the grid */
-    height: 70%; /* Set the height of the grid */
+    width: 100%; /* Set the width of the grid */
+
 }
 
 .board-item {
@@ -58,6 +75,7 @@ a {
     justify-content: center;
     align-items: center;
     overflow: hidden; /* Prevents content from overflowing */
+    border-color: #fff;
 }
 
 svg.board-icon {
@@ -65,60 +83,94 @@ svg.board-icon {
     height: 80%;
 }
 
+.board-item:nth-child(2) svg.board-icon,
 .board-item:nth-child(4) svg.board-icon,
 .board-item:nth-child(5) svg.board-icon,
-.board-item:nth-child(6) svg.board-icon {
+.board-item:nth-child(6) svg.board-icon,
+.board-item:nth-child(8) svg.board-icon {
     width: 90%;
     height: 90%;
 }
 
 .board-item:nth-child(1) {
-    border-right: 15px solid black;
-    border-bottom: 15px solid black;
+    border-right: 15px solid var(--board-color);
+    border-bottom: 15px solid var(--board-color);
 }
 
 .board-item:nth-child(2) {
-    border-left: 15px solid black;
-    border-bottom: 15px solid black;
-    border-right: 15px solid black;
+    border-left: 15px solid var(--board-color);
+    border-bottom: 15px solid var(--board-color);
+    border-right: 15px solid var(--board-color);
 }
 
 .board-item:nth-child(3) {
-    border-left: 15px solid black;
-    border-bottom: 15px solid black;
+    border-left: 15px solid var(--board-color);
+    border-bottom: 15px solid var(--board-color);
 }
 
 .board-item:nth-child(4) {
-    border-right: 15px solid black;
-    border-top: 15px solid black;
-    border-bottom: 15px solid black;
+    border-right: 15px solid var(--board-color);
+    border-top: 15px solid var(--board-color);
+    border-bottom: 15px solid var(--board-color);
 }
 
 .board-item:nth-child(5) {
-    border-top: 15px solid black;
-    border-right: 15px solid black;
-    border-bottom: 15px solid black;
-    border-left: 15px solid black;
+    border-top: 15px solid var(--board-color);
+    border-right: 15px solid var(--board-color);
+    border-bottom: 15px solid var(--board-color);
+    border-left: 15px solid var(--board-color);
 }
 
 .board-item:nth-child(6) {
-    border-left: 15px solid black;
-    border-top: 15px solid black;
-    border-bottom: 15px solid black;
+    border-left: 15px solid var(--board-color);
+    border-top: 15px solid var(--board-color);
+    border-bottom: 15px solid var(--board-color);
 }
 
 .board-item:nth-child(7) {
-    border-right: 15px solid black;
-    border-top: 15px solid black;
+    border-right: 15px solid var(--board-color);
+    border-top: 15px solid var(--board-color);
 }
 
 .board-item:nth-child(8) {
-    border-left: 15px solid black;
-    border-top: 15px solid black;
-    border-right: 15px solid black;
+    border-left: 15px solid var(--board-color);
+    border-top: 15px solid var(--board-color);
+    border-right: 15px solid var(--board-color);
 }
 
 .board-item:nth-child(9) {
-    border-left: 15px solid black;
-    border-top: 15px solid black;
+    border-left: 15px solid var(--board-color);
+    border-top: 15px solid var(--board-color);
+}
+
+svg.board-icon {
+    fill: transparent;
+    stroke: var(--mark-color);
+    stroke-linecap: round;
+    stroke-width: 20;
+}
+
+svg.board-icon.winning-mark {
+    stroke: var(--winning-mark-color);
+
+    animation-name: resize-animation;
+    animation-duration: 500ms;
+    animation-iteration-count: 2;
+
+}
+
+@keyframes resize-animation {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(0.5);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.hidden {
+    display: none;
 }
