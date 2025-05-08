@@ -12,35 +12,42 @@ const gameboard = (function createGameboard() {
 
 })();
 
-function createUser(mark, nickName='Incognito') {
+function createPlayer(mark, nickName='Incognito') {
     
     let score = 0;
-
-    nickName = (nickName === 'Incognito') ? `${nickName}#${id}` : nickName;
-
+    
     if (mark === 'x' || mark === 'o') {
         mark = mark;
     } else {
         console.log(`User's mark should be either 'x' or 'o'`);
         return;
     }
-
+    
     // Attach a random id to each player to identify them
     function generateRandomID (length = 10) {
-        const id = Math.random().toString().substring(2, length + 2);
-        return id;
+        const generatedID = Math.random().toString().substring(2, length + 2);
+        return generatedID;
     }
-
+    
     const id = generateRandomID();
 
+    nickName = (nickName === 'Incognito') ? `${nickName}#${id}` : nickName;
+    
     function updateScore(newScore) {
         score = newScore;
     }
-
-    getName = () => nickName;
-    getMark = () => mark;
-    getScore = () => score;
-    getID = () => id;
+    
+    // Modular functions
+    const switchMark = () => {
+        mark = mark === 'x' ? 'o' : 'x';
+    }
+    const setMark = (newMark) => {
+        mark = newMark;
+    }
+    const getName = () => nickName;
+    const getMark = () => mark;
+    const getScore = () => score;
+    const getID = () => id;
 
 
     return {
@@ -49,159 +56,16 @@ function createUser(mark, nickName='Incognito') {
         getScore,
         getID,
         updateScore,
+        switchMark,
+        setMark,
     }
 }
-
-const displayController = (function () {
-
-    const playersForm = document.querySelector('#players-form');
-    const startBtn = document.querySelector('#start-btn');
-    const resetBtn = document.querySelector('#reset-btn');
-    const restartBtn = document.querySelector('#restart-btn');
-    const player1Input = document.querySelector("#player1-input");
-    const player2Input = document.querySelector("#player2-input");
-    const boardArea = document.querySelector('#board-area');
-    const boardContainer = document.querySelector('#board-container');
-    const boardItems = document.querySelectorAll('.board-item');
-    const buttonsContainerBefore = document.querySelector('#buttons-container-before');
-    const buttonsContainerAfter = document.querySelector('#buttons-container-after');
-    const player1DataContainer = document.querySelector('#player1-data-container');
-    const player2DataContainer = document.querySelector('#player2-data-container');
-    const player1NameDisplay = document.querySelector('#player1-name-display');
-    const player2NameDisplay = document.querySelector('#player2-name-display');
-    const player1ScoreDisplay = document.querySelector('#player1-score-display');
-    const player2ScoreDisplay = document.querySelector('#player2-score-display');
-
-    // Define an array that can be used to the index and coordiantes of each board item
-    const boardCorrespondingArray = [
-        [0, 0], [0, 1], [0, 2],
-        [1, 0], [1, 1], [1, 2],
-        [2, 0], [2, 1], [2, 2],
-    ]
-    
-    function getSelectedRowColumn(event) {
-
-        let selectedRowColumn;
-
-        const selectedCellID = Number(event.target.id.split('-')[1]) - 1;
-        selectedRowColumn = boardCorrespondingArray[selectedCellID];
-
-        return selectedRowColumn;
-    };
-
-    function showMark(cellElement, mark) {
-        const cellSVGCodes = {
-            x: `<svg class="board-icon cross-icon" viewBox="0 0 100 100">
-                    <use xlink:href="static/icons/svg/board-elements.svg#cross"></use>
-                </svg>`,
-            o: `<svg class="board-icon circle-icon" viewBox="0 0 100 100">
-                    <use xlink:href="static/icons/svg/board-elements.svg#circle"></use>
-                </svg>`,           
-        };
-
-        if (mark === 'x') {
-            cellElement.innerHTML = cellSVGCodes.x;
-        } else if (mark === 'o') {
-            cellElement.innerHTML = cellSVGCodes.o;
-        }
-    };
-
-    function startGameDisplay(event) {
-        // Prevent the default submission of the form behaviour of the button
-        event.preventDefault();
-        const player1Name = player1Input.value.length > 0 ? player1Input.value : 'PLAYER1';
-        const player2Name = player2Input.value.length > 0 ? player2Input.value : 'PLAYER2';
-        const toggleList = [boardArea, playersForm, player1DataContainer, player2DataContainer];
-        toggleHiddenClass(toggleList);
-
-        return {
-            player1Name,
-            player2Name,
-        }
-    }
-
-    function AddEventListeners(startCallback, resetCallback, restartCallback, cellClickCallback) {
-        startBtn.addEventListener('click', startCallback);
-        resetBtn.addEventListener('click', resetCallback);
-        restartBtn.addEventListener('click', restartCallback);
-        boardItems.forEach((item) => {
-            item.addEventListener('click', cellClickCallback);
-        });
-    }
-
-    function displayUsersData(player1, player2) {
-        player1NameDisplay.innerText = player1.getName();
-        player2NameDisplay.innerText = player2.getName();
-        player1ScoreDisplay.innerText = player1.getScore();
-        player2ScoreDisplay.innerText = player2.getScore();
-    }
-
-    function resetBoard() {
-        boardItems.forEach(item => item.innerHTML = '');
-    }
-
-    function highlighWinningCells(winningCellArray) {
-
-        let winningBoardIndex, winningItemID, winningDOM;
-
-        winningCellArray.forEach(winningCellElement => {
-            let boardIndex = boardCorrespondingArray.findIndex(
-                boardElement => boardElement[0] === winningCellElement[0] && 
-                boardElement[1] === winningCellElement[1]
-            );
-            winningBoardIndex =  boardIndex + 1;
-            try {
-                winningItemID = `#cell-${winningBoardIndex}`;
-                winningDOM = document.querySelector(`${winningItemID} .board-icon`);
-                winningDOM.classList.add('winning-mark');
-            } catch(error) {
-                console.log(`Couldn't add the winning class to the winning elements, here is there: ${error}`);
-            }
-
-        })
-    }
-
-    // Helper funcitons
-
-    function toggleHiddenClass(toggleList) {
-        toggleList.forEach(el => el.classList.toggle('hidden'));
-    }
-
-    return {
-        startGameDisplay,
-        getSelectedRowColumn,
-        showMark,
-        AddEventListeners,
-        displayUsersData,
-        resetBoard,
-        highlighWinningCells,
-    }
-    
-})();
 
 gameController = (function () {
 
     const gameboardArray = gameboard.gameboardArray;
-    
-    const getCurrentResult = () => gameboardArray;
-
-    function playTurn(value, rowIndex, columnIndex) {
-        if (value !== 'x' && value !== 'o') {
-            // only 'x' and 'o' are accepted as input values
-            console.log('Input value should be either "x" or "o."');
-            return;
-        } else if (gameboardArray[rowIndex][columnIndex] !== null) {
-            console.log('The position has already been taken!');
-            return;
-        }
-        gameboardArray[rowIndex][columnIndex] = value;
-        // Check there is a winner (commented out, will be check later in the roundResult)
-        // checkRoundWinner(gameboardArray);
-        return;
-    };
 
     // Helper functions
-
     function transposeBoard(board) {
 
         const transposedBoard = [];
@@ -224,6 +88,37 @@ gameController = (function () {
         return transposedBoard;
 
     }
+
+    function restartPlayersData(player1, player2) {
+        player1.updateScore(0);
+        player2.updateScore(0);
+        player1.setMark('x');
+        player2.setMark('o');
+    }
+
+    // Modular functions 
+    const getCurrentResult = () => gameboardArray;
+
+    function playTurn(value, rowIndex, columnIndex) {
+
+        // This function only fills the gameboardArray cell with the input value if possible and returns nothing
+
+        if (value !== 'x' && value !== 'o') {
+            // only 'x' and 'o' are accepted as input values
+            console.log('Input value should be either "x" or "o."');
+            return;
+        } else if (gameboardArray[rowIndex][columnIndex] !== null) {
+            console.log('The position has already been taken!');
+            return;
+        }
+        gameboardArray[rowIndex][columnIndex] = value;
+        // Check there is a winner (commented out, will be check later in the roundResult)
+        // checkRoundWinner(gameboardArray);
+        return;
+
+    };
+
+    
 
     function getMainDiagonal(board) {
         const mainDiagonal = [];
@@ -261,7 +156,7 @@ gameController = (function () {
         const numRows = inputArray.length;
         const numColumns = inputArray[0].length;
         let winnerMark = null;
-        let consecutive_index = null;
+        let consecutiveIndex = null;
 
         for (let _mark of ['x', 'o']) {
 
@@ -278,8 +173,8 @@ gameController = (function () {
                         winnerMark = _mark;
 
                         // return the row/column/diagonal index
-                        consecutive_index = i;
-                        return {consecutive_index, winnerMark};
+                        consecutiveIndex = i;
+                        return {consecutiveIndex, winnerMark};
                     }
                 }
                 // reset row counter for the next row
@@ -288,65 +183,75 @@ gameController = (function () {
 
         }
 
-        return {consecutive_index, winnerMark};
+        return {consecutiveIndex, winnerMark};
         
     }
 
     function checkRoundWinner() {
-
         let isRoundFinished = false;
         let finishedElements = [];
+        let isItDraw = false;
+        let winnerMark = null;
 
         const actualBoard = [...gameboardArray];
-        const rowCompleted = checkThreeConsectives(actualBoard).consecutive_index;
+        const rowResult = checkThreeConsectives(actualBoard);
+        const rowCompleted = rowResult.consecutiveIndex;
+        const rowWinnerMark = rowResult.winnerMark;
         
         const transposedBoard = transposeBoard(actualBoard);
-        const columnCompleted = checkThreeConsectives(transposedBoard).consecutive_index;
+        const columnResult = checkThreeConsectives(transposedBoard);
+        const columnCompleted = columnResult.consecutiveIndex;
+        const columnWinnerMark = columnResult.winnerMark;
         
         const mainDiagonalArray = getMainDiagonal(actualBoard);
-        const mainDiagonalCompleted = checkThreeConsectives(mainDiagonalArray).consecutive_index;
+        const mainDiagonalResult = checkThreeConsectives(mainDiagonalArray);
+        const mainDiagonalCompleted = mainDiagonalResult.consecutiveIndex;
+        const mainDiagonalWinnerMark = mainDiagonalResult.winnerMark;
         
         const secondaryDiagonalArray = getSecondaryDiagonal(transposedBoard);
-        const secondaryDiagonalCompleted = checkThreeConsectives(secondaryDiagonalArray).consecutive_index;
+        const secondaryDiagonalResult = checkThreeConsectives(secondaryDiagonalArray);
+        const secondaryDiagonalCompleted = secondaryDiagonalResult.consecutiveIndex;
+        const secondaryDiagonalWinnerMark = secondaryDiagonalResult.winnerMark;
 
-        if (
-            rowCompleted === null &&
-            columnCompleted === null &&
-            mainDiagonalCompleted === null &&
-            secondaryDiagonalCompleted === null
-        ) {
+        const hasEmptyCells = actualBoard.some(row => row.includes(null));
 
-            isRoundFinished = false;
-
-        } else {
-
+        // Check if there is a winner
+        if (rowCompleted !== null || columnCompleted !== null || mainDiagonalCompleted !== null || secondaryDiagonalCompleted !== null) {
             isRoundFinished = true;
 
-            // Spot finishing elements
+            // Determine the winning elements
+            const populateFinishedElements = (callback) => {
+                for (let i = 0; i < 3; i++) {
+                    finishedElements[i] = callback(i);
+                }
+            };
+            
             if (rowCompleted !== null) {
-                for (let i=0; i < 3; i++) {
-                    finishedElements[i] = [rowCompleted, i];
-                }
+                populateFinishedElements(i => [rowCompleted, i]);
+                winnerMark = rowWinnerMark;
             } else if (columnCompleted !== null) {
-                for (let i=0; i < 3; i++) {
-                    finishedElements[i] = [i, columnCompleted];
-                }
+                populateFinishedElements(i => [i, columnCompleted]);
+                winnerMark = columnWinnerMark;
             } else if (mainDiagonalCompleted !== null) {
-                for (let i=0; i < 3; i++) {
-                    finishedElements[i] = [i, i];
-                }
+                populateFinishedElements(i => [i, i]);
+                winnerMark = mainDiagonalWinnerMark;
             } else if (secondaryDiagonalCompleted !== null) {
-                for (let i=0; i < 3; i++) {
-                    finishedElements[i] = [i, 2 - i];
-                }
+                populateFinishedElements(i => [i, 2 - i]);
+                winnerMark = secondaryDiagonalWinnerMark;
             }
+        } else if (hasEmptyCells) {
+            isRoundFinished = false;
+        } else {         
+            isRoundFinished = true;
+            isItDraw = true;
         }
 
         return {
             isRoundFinished,
             finishedElements,
+            isItDraw,
+            winnerMark,
         }
-
     }
 
     function resetBoard() {
@@ -359,7 +264,14 @@ gameController = (function () {
 
     }
 
-    function switchMark(currentMark) {
+    function restartGame(player1, player2) {
+
+        resetBoard();
+        restartPlayersData(player1, player2);
+
+    }
+
+    function switchCurrentMark(currentMark) {
         const newCurrentMark = currentMark === 'x' ? 'o' : 'x';
         return newCurrentMark;
     }
@@ -408,14 +320,24 @@ gameController = (function () {
                 }
             }
 
-            switchPlayerMark(currentMark);
+            currentMark = switchCurrentMark(currentMark);
         }
     }
 
-    function playRound(player1, player2, currentMark, selectedRow, selectedColumn) {
+    function playRound(player1, player2, currentMark, selectedRowColumn) {
 
-        let isRoundFinished = false;
         let roundResult = null;
+        let isRoundFinished = false;
+        let finishedElements = [];
+        let winnerMark =  null;
+        let isItDraw = null;
+        let selectedRow, selectedColumn;
+
+        if (selectedRowColumn === 'invalid') {
+            return 'invalid';
+        } else {
+            [selectedRow, selectedColumn] = selectedRowColumn;
+        }
 
         let player;
         if (player1.getMark() === currentMark) {
@@ -423,23 +345,28 @@ gameController = (function () {
         } else if (player2.getMark() === currentMark) {
             player = player2;
         } else {
-            console.log("The current mark does not match any of the user' marks");
+            console.log("The current mark does not match any of the player' marks");
         }
 
         
         const playerID = player.getID();
         const playerMark = player.getMark();
 
+        
         playTurn(playerMark, selectedRow, selectedColumn);
 
         // Check finishing of the game
         roundResult = checkRoundWinner();
         isRoundFinished = roundResult.isRoundFinished;
         finishedElements = roundResult.finishedElements;
+        winnerMark = roundResult.winnerMark;
+        isItDraw = roundResult.isItDraw;
 
         if (isRoundFinished) {
 
-            if (playerID === player1.getID()) {
+            if (isItDraw) {
+                // Do nothing for now
+            } else if (playerID === player1.getID()) {
                 let newScore = player1.getScore() + 1;
                 player1.updateScore(newScore)
             } else if (playerID === player2.getID()) {
@@ -448,10 +375,12 @@ gameController = (function () {
             }
 
             resetBoard();
+            player1.switchMark();
+            player2.switchMark();
 
         }
 
-        const newCurrentMark = switchMark(currentMark);
+        const newCurrentMark = switchCurrentMark(currentMark);
 
         return {
             isRoundFinished,
@@ -465,67 +394,237 @@ gameController = (function () {
         getCurrentResult,
         checkRoundWinner,
         playTurn,
+        playRoundConsole,
         playRound,
-        resetBoard
+        resetBoard,
+        restartGame,
+        switchCurrentMark,
     };
+})();
+
+const displayController = (function () {
+
+    const playersForm = document.querySelector('#players-form');
+    const startBtn = document.querySelector('#start-btn');
+    const resetBtn = document.querySelector('#reset-btn');
+    const restartBtn = document.querySelector('#restart-btn');
+    const player1Input = document.querySelector("#player1-input");
+    const player2Input = document.querySelector("#player2-input");
+    const boardArea = document.querySelector('#board-area');
+    const boardContainer = document.querySelector('#board-container');
+    const boardItems = document.querySelectorAll('.board-item');
+    const buttonsContainerBefore = document.querySelector('#buttons-container-before');
+    const buttonsContainerAfter = document.querySelector('#buttons-container-after');
+    const player1DataContainer = document.querySelector('#player1-data-container');
+    const player2DataContainer = document.querySelector('#player2-data-container');
+    const player1NameDisplay = document.querySelector('#player1-name-display');
+    const player2NameDisplay = document.querySelector('#player2-name-display');
+    const player1ScoreDisplay = document.querySelector('#player1-score-display');
+    const player2ScoreDisplay = document.querySelector('#player2-score-display');
+
+    // Define an array that can be used to the index and coordiantes of each board item
+    const boardCorrespondingArray = [
+        [0, 0], [0, 1], [0, 2],
+        [1, 0], [1, 1], [1, 2],
+        [2, 0], [2, 1], [2, 2],
+    ];
+
+    // Helper functions
+
+    function toggleHiddenClass(toggleList) {
+        toggleList.forEach(el => el.classList.toggle('hidden'));
+    }
+    
+    function getSelectedRowColumn(event) {
+
+        let selectedRowColumn;
+
+        // Check that cell is not already selected
+        let clickedItem = event.target.closest('.board-item');
+        if (clickedItem.children.length > 0) {
+            selectedRowColumn = 'invalid';
+        } else {
+            const selectedCellID = Number(clickedItem.id.split('-')[1]) - 1;
+            selectedRowColumn = boardCorrespondingArray[selectedCellID];
+        }
+
+        return selectedRowColumn;
+
+    };
+
+    // Modular functinos
+
+    function showMark(cellElement, mark) {
+        const cellSVGCodes = {
+            x: `<svg class="board-icon cross-icon" viewBox="0 0 100 100">
+                    <use xlink:href="static/icons/svg/board-elements.svg#cross"></use>
+                </svg>`,
+            o: `<svg class="board-icon circle-icon" viewBox="0 0 100 100">
+                    <use xlink:href="static/icons/svg/board-elements.svg#circle"></use>
+                </svg>`,           
+        };
+
+        if (mark === 'x') {
+            cellElement.innerHTML = cellSVGCodes.x;
+        } else if (mark === 'o') {
+            cellElement.innerHTML = cellSVGCodes.o;
+        }
+    };
+
+    function startGameDisplay(event) {
+        // Prevent the default submission of the form behaviour of the button
+        event.preventDefault();
+        const player1Name = player1Input.value.length > 0 ? player1Input.value : 'PLAYER1';
+        const player2Name = player2Input.value.length > 0 ? player2Input.value : 'PLAYER2';
+        const toggleList = [boardArea, playersForm, player1DataContainer, player2DataContainer];
+        toggleHiddenClass(toggleList);
+
+        return {
+            player1Name,
+            player2Name,
+        }
+    }
+
+    function addEventListeners(startCallback, resetCallback, restartCallback, cellClickCallback) {
+        startBtn.addEventListener('click', startCallback);
+        resetBtn.addEventListener('click', resetCallback);
+        restartBtn.addEventListener('click', restartCallback);
+        boardItems.forEach((item) => {
+            item.addEventListener('click', cellClickCallback);
+        });
+    }
+
+    function displayPlayersData(player1, player2) {
+        player1NameDisplay.innerText = `${player1.getName()} - ${player1.getMark().toUpperCase()}`;
+        player2NameDisplay.innerText = `${player2.getName()} - ${player2.getMark().toUpperCase()}`;
+        player1ScoreDisplay.innerText = player1.getScore();
+        player2ScoreDisplay.innerText = player2.getScore();
+    }
+
+    function resetBoard() {
+        boardItems.forEach(item => item.innerHTML = '');
+    }
+
+    function highlighWinningCells(winningCellArray) {
+
+        let winningBoardIndex, winningItemID, winningDOM;
+
+        winningCellArray.forEach(winningCellElement => {
+            let boardIndex = boardCorrespondingArray.findIndex(
+                boardElement => boardElement[0] === winningCellElement[0] && 
+                boardElement[1] === winningCellElement[1]
+            );
+            winningBoardIndex =  boardIndex + 1;
+            try {
+                winningItemID = `#cell-${winningBoardIndex}`;
+                winningDOM = document.querySelector(`${winningItemID} .board-icon`);
+                winningDOM.classList.add('winning-mark');
+            } catch(error) {
+                console.log(`Couldn't add the winning class to the winning elements, here is there: ${error}`);
+            }
+
+        })
+    }
+
+    function updateScores(player1, player2) {
+        player1ScoreDisplay.innerText = player1.getScore();
+        player2ScoreDisplay.innerText = player2.getScore();
+    }
+
+    function freezeBoard(cellClickCallback) {
+        // Remove event listeners from the board items
+        boardItems.forEach((item) => {
+            item.removeEventListener('click', cellClickCallback);
+        });
+    }
+
+
+    return {
+        startGameDisplay,
+        getSelectedRowColumn,
+        showMark,
+        addEventListeners,
+        displayPlayersData,
+        updateScores,
+        resetBoard,
+        highlighWinningCells,
+        freezeBoard,
+    }
+    
 })();
 
 // Game Flow Controller ()
 const gameFlowController = (function() {
 
-    let player1, player2, currentTurnMark, isRoundFinished, finishedElements = null;
+    let player1, player2, currentTurnMark, currentRoundTurnMark, isRoundFinished, finishedElements = null;
 
     function startCallback(event) {
         playerNames = displayController.startGameDisplay(event);
-        player1 = createUser('x', playerNames.player1Name);
-        player2 = createUser('o', playerNames.player2Name);
-        displayController.displayUsersData(player1, player2);
+        player1 = createPlayer('x', playerNames.player1Name);
+        player2 = createPlayer('o', playerNames.player2Name);
+        displayController.displayPlayersData(player1, player2);
         currentTurnMark = player1.getMark();
+        // This mark is used for reset board purposes, so each round will begin with the same mark after resetting the board (first player's turn won't change)
+        currentRoundTurnMark = player1.getMark();
     }
     
-    function playRoundCallBack() {
-        
-        gameController.playRound(player1, player2);
-
-    }
-
     function resetCallback(event) {
-        displayController.resetBoard();
         gameController.resetBoard();
+        displayController.resetBoard();
+        displayController.displayPlayersData(player1, player2);
+        console.log({isRoundFinished});
+        if (!isRoundFinished) currentTurnMark = currentRoundTurnMark;
+        isRoundFinished = null;
+        addAllEventListeners();
     }
 
     function restartCallback(event) {
+        gameController.restartGame(player1, player2);
         displayController.resetBoard();
+        displayController.displayPlayersData(player1, player2);
+        currentTurnMark = player1.getMark();
+        isRoundFinished = null;
+        addAllEventListeners();
     }
 
     function cellClickCallback(event) {
+        console.log(player1.getMark(), player2.getMark());
         const selectedCellElement = event.target.closest('.board-item');
         const selectedRowColumnArray = displayController.getSelectedRowColumn(event);
 
-        displayController.showMark(selectedCellElement, mark=currentTurnMark);
+        if (selectedRowColumnArray !== 'invalid') {
 
-        const roundResult = gameController.playRound(
-            player1,
-            player2,
-            currentTurnMark,
-            selectedRowColumnArray[0],
-            selectedRowColumnArray[1]
-        );
-        // console.log(roundResult);
-        // console.log(gameController.getCurrentResult());
-        isRoundFinished = roundResult.isRoundFinished;
-        currentTurnMark = roundResult.newCurrentMark;
-
-
-        if (isRoundFinished) {
-            finishedElements = roundResult.finishedElements;
-            displayController.highlighWinningCells(finishedElements);
+            displayController.showMark(selectedCellElement, mark=currentTurnMark);
+            const roundResult = gameController.playRound(
+                player1,
+                player2,
+                currentTurnMark,
+                selectedRowColumnArray,
+            );
+            // console.log(roundResult);
+            // console.log(gameController.getCurrentResult());
+            isRoundFinished = roundResult.isRoundFinished;
+            currentTurnMark = roundResult.newCurrentMark;
+    
+    
+            if (isRoundFinished) {
+                finishedElements = roundResult.finishedElements;
+                displayController.highlighWinningCells(finishedElements);
+                displayController.updateScores(player1, player2);
+                displayController.freezeBoard(cellClickCallback);
+                currentRoundTurnMark = gameController.switchCurrentMark(currentRoundTurnMark);
+            }
+            
         }
+
 
     }
 
-    displayController.AddEventListeners(startCallback, resetCallback, restartCallback, cellClickCallback);
+    addAllEventListeners = function() {
+        displayController.addEventListeners(startCallback, resetCallback, restartCallback, cellClickCallback);
+    };
 
+    addAllEventListeners();
 
 })();
 
