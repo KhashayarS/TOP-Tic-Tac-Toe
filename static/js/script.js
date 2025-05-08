@@ -83,7 +83,6 @@ gameController = (function () {
             transposedBoard.push(currentRow);
         }
 
-        console.transposedBoard;
 
         return transposedBoard;
 
@@ -169,7 +168,6 @@ gameController = (function () {
                     };
                     if (counter >= 3) {
 
-                        // console.log(`Player with the mark "${_mark}" Wins!`);
                         winnerMark = _mark;
 
                         // return the row/column/diagonal index
@@ -576,8 +574,8 @@ const gameFlowController = (function() {
         gameController.resetBoard();
         displayController.resetBoard();
         displayController.displayPlayersData(player1, player2);
-        console.log({isRoundFinished});
-        if (!isRoundFinished) currentTurnMark = currentRoundTurnMark;
+        // Always the player with x mark should begin the game
+        currentTurnMark = !isRoundFinished ? currentRoundTurnMark : 'x';
         isRoundFinished = null;
         addAllEventListeners();
     }
@@ -592,7 +590,6 @@ const gameFlowController = (function() {
     }
 
     function cellClickCallback(event) {
-        console.log(player1.getMark(), player2.getMark());
         const selectedCellElement = event.target.closest('.board-item');
         const selectedRowColumnArray = displayController.getSelectedRowColumn(event);
 
