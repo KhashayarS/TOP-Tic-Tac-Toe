@@ -108,7 +108,7 @@ gameController = (function () {
             return;
         } else if (gameboardArray[rowIndex][columnIndex] !== null) {
             console.log('The position has already been taken!');
-            return;
+            return 'invalidSelection';
         }
         gameboardArray[rowIndex][columnIndex] = value;
         // Check there is a winner (commented out, will be check later in the roundResult)
@@ -274,7 +274,7 @@ gameController = (function () {
         return newCurrentMark;
     }
 
-    function playRoundConsole(player1, player2) {
+    function playRoundConsole(player1, player2, currentMark='x') {
 
         let isRoundFinished = false;
         let player = player1;
@@ -284,13 +284,20 @@ gameController = (function () {
 
         let newInput = 'empty';
         while (!isRoundFinished, newInput !== null) {
+            
             const playerName = player.getName();
             const playerID = player.getID();
             const playerMark = player.getMark();
 
+            let playTurnResult;
+
             console.log(`Player ${playerName}, it's your turn! Here is the current board, Pick one of the empty cells!`);
             console.log(gameboardArray);
-            // newInput = prompt(`${playerName}! Input two digits separated by comma, i.e. the row and column numbers (beginning from 0)\ne.g. 0, 2`);
+
+            // Get the input row and column from the user
+            newInput = prompt(`${playerName}! Input two digits separated by comma, i.e. the row and column numbers (beginning from 0)\ne.g. 0, 2\ntype 'quit' to end the game!`);
+
+            if (newInput === 'quit') break;
 
             let playerInput;
             try {
@@ -299,16 +306,21 @@ gameController = (function () {
                 throw (`The input format is not accpetable:\n${error}`);
             }
 
-            playTurn(playerMark, playerInput[0], playerInput[1]);
+            playTurnResult = playTurn(playerMark, playerInput[0], playerInput[1]);
+
+            if (playTurnResult === 'invalidSelection') {
+                console.log('Invalid selection! Try again ...');
+                continue;
+            }
 
             // Check finishing of the game
             roundResult = checkRoundWinner();
             isRoundFinished = roundResult.isRoundFinished;
-
-
+            
 
             if (isRoundFinished) {
-                console.log(`Round is finished! Winner: ${player.getName()}`);
+                alert(`Round is finished! Winner: ${player.getName()}`);
+                resetBoard();
                 if (playerID === player1.getID()) {
                     let newScore = player1.getScore() + 1;
                     player1.updateScore(newScore)
@@ -319,6 +331,12 @@ gameController = (function () {
             }
 
             currentMark = switchCurrentMark(currentMark);
+            
+            if (player1.getMark() === currentMark) {
+                player = player1;
+            } else if (player2.getMark() === currentMark) {
+                player = player2;
+            }
         }
     }
 
@@ -629,3 +647,6 @@ const gameFlowController = (function() {
 
 })();
 
+// Testing console version
+const player1 = createPlayer('x', 'John');
+const player2 = createPlayer('o', 'Jane');
