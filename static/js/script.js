@@ -404,7 +404,7 @@ gameController = (function () {
 
 const displayController = (function () {
 
-    const playersForm = document.querySelector('#players-form');
+    const playersFormContainer = document.querySelector('#players-form-container');
     const startBtn = document.querySelector('#start-btn');
     const resetBtn = document.querySelector('#reset-btn');
     const restartBtn = document.querySelector('#restart-btn');
@@ -419,6 +419,8 @@ const displayController = (function () {
     const player2DataContainer = document.querySelector('#player2-data-container');
     const player1NameDisplay = document.querySelector('#player1-name-display');
     const player2NameDisplay = document.querySelector('#player2-name-display');
+    const player1MarkDisplay = document.querySelector('#player1-mark-display');
+    const player2MarkDisplay = document.querySelector('#player2-mark-display');
     const player1ScoreDisplay = document.querySelector('#player1-score-display');
     const player2ScoreDisplay = document.querySelector('#player2-score-display');
 
@@ -474,9 +476,9 @@ const displayController = (function () {
     function startGameDisplay(event) {
         // Prevent the default submission of the form behaviour of the button
         event.preventDefault();
-        const player1Name = player1Input.value.length > 0 ? player1Input.value : 'PLAYER1';
-        const player2Name = player2Input.value.length > 0 ? player2Input.value : 'PLAYER2';
-        const toggleList = [boardArea, playersForm, player1DataContainer, player2DataContainer];
+        const player1Name = player1Input.value.length > 0 ? player1Input.value : 'PLAYER 1';
+        const player2Name = player2Input.value.length > 0 ? player2Input.value : 'PLAYER 2';
+        const toggleList = [boardArea, playersFormContainer, player1DataContainer, player2DataContainer];
         toggleHiddenClass(toggleList);
 
         return {
@@ -495,8 +497,10 @@ const displayController = (function () {
     }
 
     function displayPlayersData(player1, player2) {
-        player1NameDisplay.innerText = `${player1.getName()} - ${player1.getMark().toUpperCase()}`;
-        player2NameDisplay.innerText = `${player2.getName()} - ${player2.getMark().toUpperCase()}`;
+        player1NameDisplay.innerText = player1.getName();
+        player2NameDisplay.innerText = player2.getName();
+        player1MarkDisplay.innerText = player1.getMark().toUpperCase();
+        player2MarkDisplay.innerText = player2.getMark().toUpperCase();
         player1ScoreDisplay.innerText = player1.getScore();
         player2ScoreDisplay.innerText = player2.getScore();
     }

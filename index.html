@@ -16,7 +16,8 @@
 
         <div class="player-data-container hidden" id="player1-data-container">
             <h3 id="player1-name-display">Khashayar</h3>
-            <h4>Score: <span id="player1-score-display">3</span></h4>
+            <h4 class="player-mark-display" id="player1-mark-display">X</h4>
+            <h4>Score: <span id="player1-score-display">4</span></h4>
         </div>
 
         <div class="board-area hidden" id="board-area">
@@ -44,25 +45,26 @@
         </div>
 
         <div class="player-data-container hidden" id="player2-data-container">
-            <h3 id="player2-name-display">Majid</h3>
-            <h4>Score: <span id="player2-score-display">2</span></h4>
+            <h3 id="player2-name-display">Khashayar</h3>
+            <h4 class="player-mark-display" id="player2-mark-display">O</h4>
+            <h4>Score: <span id="player2-score-display">4</span></h4>
         </div>
 
-        <div class="players-form" id="players-form">
-            <form>
+        <div class="players-form-container" id="players-form-container">
+            <form class="players-form">
 
                 <h3>Enter your names here:</h3>
-                <div id="player1-input-container">
+                <div class="player-input-container" id="player1-input-container">
                     <label for="player1-input">Player 1:</label>
                     <input type="text" id="player1-input">
                 </div>
-                <div id="player2-input-container">
+                <div class="player-input-container" id="player2-input-container">
                     <label for="player2-input">Player 2:</label>
                     <input type="text" id="player2-input">
                 </div>
 
                 <div class="buttons-container-before" id="buttons-container-before">
-                    <button class="start-btn" id="start-btn">Start</button>
+                    <button type="submit" class="start-btn" id="start-btn">Start</button>
                 </div>
 
             </form>

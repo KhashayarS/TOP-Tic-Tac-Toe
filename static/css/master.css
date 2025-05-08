@@ -1,6 +1,29 @@
+/* Google Fonts */
+@font-face {
+    font-family: 'Roboto';
+    src: url('/static/fonts/Roboto-Regular.ttf') format(truetype);
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Roboto';
+    src: url('/static/fonts/Roboto-Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Tagesschrift';
+    src: url('/static/fonts/Tagesschrift-Regular.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+
 /* Variables */
 :root {
-    --page-color: #ff143b;
+    --page-color: #fffb14;
+    --btn-txt-color: #1177fc;
     --board-color: #ff00ea;
     --mark-color: #9a00ff;
     --winning-mark-color: #00ff93;
@@ -45,20 +68,23 @@ body {
     background-repeat: no-repeat;
     background-size: cover;
     color: var(--page-color);
+    position: relative;
 }
 
 .main {
-    /* border: 1px solid hotpink; */
-    width: 100%;
-    display: grid;
-    grid-template-columns: 1fr 5fr 1fr;
-    align-items: center;
     height: 100vh;
-    width: 100vh;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
     margin: 0 auto;
+    overflow: visible;
 }
 
 .board-area {
+    height: 80%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 
 }
 
@@ -67,7 +93,27 @@ body {
     grid-template-rows: repeat(3, 1fr); /* 3 equal rows */
     grid-template-columns: repeat(3, 1fr); /* 3 equal columns */
     width: 100%; /* Set the width of the grid */
+    height: 80%;
+}
 
+.buttons-container-after {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.reset-btn,
+.restart-btn {
+    font-size: 24px;
+    height: 80px;
+    color: #4f2666;
+}
+
+.reset-btn {
+    background-color: orange;
+}
+
+.restart-btn {
+    background-color: red;
 }
 
 .board-item {
@@ -78,6 +124,68 @@ body {
     align-items: center;
     overflow: hidden; /* Prevents content from overflowing */
     border-color: #fff;
+}
+
+.players-form {
+    height: 400px;
+    font-size: 48px;
+    font-family: 'Tagesschrift', sans-serif;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+}
+
+.player-input-container {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 100%;
+}
+
+input[type="text"] {
+    border: none;
+    width: 250px;
+    height: 50px;
+    font-size: 35px;
+    font-family: 'Roboto' sans-serif;
+    font-weight: bold;
+    padding: 10px;
+    background-color: #ffffff83;
+}
+
+.player-data-container {
+    font-size: 28px;
+    text-align: center;
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+
+.player-mark-display {
+    font-size: 70px;
+    color: rgb(90, 212, 41);
+}
+
+button {
+    width: 160px;
+    height: 60px;
+    font-size: 28px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold;
+    color: var(--btn-txt-color);
+    border: none;
+    border-radius: 10px;
+}
+
+.start-btn {
+    background: #00ffc8;
 }
 
 svg.board-icon {
@@ -161,6 +269,10 @@ svg.board-icon.winning-mark {
 
 }
 
+.hidden {
+    display: none;
+}
+
 @keyframes resize-animation {
     0% {
         transform: scale(1);
@@ -173,6 +285,3 @@ svg.board-icon.winning-mark {
     }
 }
 
-.hidden {
-    display: none;
-}
