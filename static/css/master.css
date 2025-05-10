@@ -94,6 +94,7 @@ body {
     grid-template-columns: repeat(3, 1fr); /* 3 equal columns */
     width: 100%; /* Set the width of the grid */
     height: 80%;
+    aspect-ratio: 1 / 1;
 }
 
 .buttons-container-after {
